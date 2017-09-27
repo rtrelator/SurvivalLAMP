@@ -190,6 +190,10 @@ def runMultTest(transaction_list, trans4lcm, threshold, set_method, lcm_path, ma
 				Yj = len( subtransaction_list )
 				Yj_list.append(Yj)
 			min_Yj = min( Yj_list )
+			# if min Yj is 1, remove value and recompute new minimum
+			if min_Yj == 1:
+				Yj_list.remove( 1 )
+				min_Yj = min( Yj_list )
 			if min_Yj < max_lambda:
 				max_lambda = int( min_Yj-1 )
 				lam = int( min_Yj-1 )
