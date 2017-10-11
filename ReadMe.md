@@ -10,11 +10,11 @@ The usage of LAMP is described in [http://a-terada.github.io/lamp/.](http://a-te
 2. Compile: run `make` in corresponding directory
 3. Run: 
 ```
-python lampSA_ver1.py -p logrank [item_file] [status_file] [significance_level] -t [time_file] > [output_file]
+python lampSA.py -p logrank [item_file] [status_file] [significance_level] -t [time_file] > [output_file]
 ```
 EXAMPLE: 
 ```
-python lampSA_ver1.py -p logrank sample/sample_logrank_item.csv sample/sample_logrank_status.csv 0.05 -t sample/sample_logrank_time.csv > sample/sample_logrank_output.txt
+python lampSA.py -p logrank sample/sample_logrank_item.csv sample/sample_logrank_status.csv 0.05 -t sample/sample_logrank_time.csv > sample/sample_logrank_output.txt
 ```
 
 
