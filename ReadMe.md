@@ -1,8 +1,8 @@
 
-Survival LAMP is an extended version of LAMP (Terada et al 2013) for performing multiple testing correction in finding combinatorial markers using log-rank test in survival analysis. Details and usage of the original LAMP are given in [http://a-terada.github.io/lamp/.](http://a-terada.github.io/lamp/)
+Survival LAMP is an extended version of LAMP (Terada et al 2013) for performing multiple testing correction in finding combinatorial markers using log-rank test in survival analysis. Details and usage of the original LAMP can be found [here](http://a-terada.github.io/lamp/).
 
 
-## How to run LAMP for survival analysis:
+### How to run LAMP for survival analysis:
 1. Clone or download from [GitHub](https://github.com/rtrelator/SurvivalLAMP).
 2. Compile: run `make` in corresponding directory
 3. Run: 
@@ -15,7 +15,7 @@ python lampSA.py -p logrank sample/sample_logrank_item.csv sample/sample_logrank
 ```
 
 
-## Input Files:
+### Input Files:
 1. ITEM FILE
 - similar format to the original LAMP item file, this file contains association information of samples/individuals and markers
 - first row as header (commented first entry, contains marker identifiers)
@@ -44,7 +44,7 @@ python lampSA.py -p logrank sample/sample_logrank_item.csv sample/sample_logrank
 - example: sample/sample_logrank_time.csv
 
 
-## Output File:
+### Output File:
 - similar format to the original LAMP output file
 - example: sample/sample_logrank_output.txt
 ```
