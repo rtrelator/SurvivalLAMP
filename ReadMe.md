@@ -1,4 +1,3 @@
-# LAMP for SURVIVAL ANALYSIS
 
 Survival LAMP is an extended version of LAMP (Terada et al 2013), a multiple-testing correction method,
 for performing log-rank test in survival analysis.
