@@ -66,7 +66,7 @@ Rank	Raw p-value	Adjusted p-value	Combination	Arity	# of target rows	# of failed
 3	8.6793e-05	0.0077246	r60_n9,G3PDH_570,r60_3	3	11	8
 4	0.00039433	0.035096	r60_n9,r60_a22,G3PDH_570	3	10	7
 5	0.00042816	0.038106	r60_n9,Pro25G,G3PDH_570	3	10	7
-Time (sec.): Computing correction factor 0.743, P-value 1.304, Total 2.046
+Time (sec.): Computing correction factor 0.620, P-value 1.363, Total 1.983
 ```
 
 - *#* of tested elements = number of marker columns in item file
