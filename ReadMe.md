@@ -52,7 +52,7 @@ python lampSA_ver1.py -p logrank sample/sample_logrank_item.csv sample/sample_lo
 - similar format to the original LAMP output file
 - example: sample/sample_logrank_output.txt
 ```
-# LAMP ver. 1.0.5
+# Survival LAMP ver. 1.0
 # item-file: ../LAMP_SurvivalAnalysis/lampSA_ver1/sample/sample_logrank_item.csv
 # value-file: ../LAMP_SurvivalAnalysis/lampSA_ver1/sample/sample_logrank_status.csv
 # time-file: ../LAMP_SurvivalAnalysis/lampSA_ver1/sample/sample_logrank_time.csv
@@ -61,17 +61,17 @@ python lampSA_ver1.py -p logrank sample/sample_logrank_item.csv sample/sample_lo
 # # of tested elements: 9, # of samples: 292, # of positive samples: 101
 # Adjusted significance level: 0.0005618, Correction factor: 89 (# of target rows >= 1)
 # # of significant combinations: 5
-Rank	Raw p-value	Adjusted p-value	Combination	Arity	# of target rows	# of at risk in the targets
+Rank	Raw p-value	Adjusted p-value	Combination	Arity	# of target rows	# of failed targets
 1	1.738e-05	0.0015468	r60_n9,G3PDH_570	2	14	10
 2	2.4931e-05	0.0022188	r60_n9,G3PDH_570,r60_1,r60_3	4	9	7
 3	8.6793e-05	0.0077246	r60_n9,G3PDH_570,r60_3	3	11	8
 4	0.00039433	0.035096	r60_n9,r60_a22,G3PDH_570	3	10	7
 5	0.00042816	0.038106	r60_n9,Pro25G,G3PDH_570	3	10	7
-Time (sec.): Computing correction factor 0.669, P-value 1.310, Total 1.979
+Time (sec.): Computing correction factor 0.743, P-value 1.304, Total 2.046
 ```
 
 - *#* of tested elements = number of marker columns in item file
 - *#* of samples = number of samples/individuals included (not counting censored samples/individuals after first failure time)
 - *#* of positive samples = number of failed samples/individuals (i.e. status = 1)
 - *#* of target rows = number of samples/individuals affected by the combination
-- *#* of at risk in targets = number of samples/individuals affected by the combination whose status is 1 (i.e. failures)
+- *#* of failed targets = number of samples/individuals affected by the combination whose status is 1 (i.e. failures)
