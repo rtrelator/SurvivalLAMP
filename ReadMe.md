@@ -1,9 +1,8 @@
 
-Survival LAMP is an extended version of LAMP (Terada et al 2013), a multiple-testing correction method,
-for performing log-rank test in survival analysis.
+Survival LAMP is an extended version of LAMP (Terada et al 2013) for performing log-rank test in survival analysis.
 
-LAMP is a code for multiple testing correction to discover combinatorial effects. The lcm53.zip is the redistributed file that is provided in http://research.nii.ac.jp/~uno/codes.htm. 
-The usage of LAMP is described in http://a-terada.github.io/lamp/.
+LAMP is a code for multiple testing correction to discover combinatorial effects. The lcm53.zip is the redistributed file that is provided in [http://research.nii.ac.jp/~uno/codes.htm.](http://research.nii.ac.jp/~uno/codes.htm)
+The usage of LAMP is described in [http://a-terada.github.io/lamp/.](http://a-terada.github.io/lamp/)
 
 ## Input Files:
 1. ITEM FILE
@@ -13,8 +12,7 @@ The usage of LAMP is described in http://a-terada.github.io/lamp/.
 - succeeding columns represent markers (e.g. gene, SNPs, etc.) (one marker per column)
 - entries are 1 or 0 (integer type)
 - file format: csv
-example: 
-sample/sample_logrank_item.csv
+- example: sample/sample_logrank_item.csv
 
 
 2. STATUS FILE
@@ -23,8 +21,7 @@ sample/sample_logrank_item.csv
 - first column must be the same as the item file 
 - second column contains status of corresponding samples/individuals (1 = event, 0 = censored)
 - file format: csv
-example:
-sample/sample_logrank_status.csv
+- example: sample/sample_logrank_status.csv
 
 
 3. TIME FILE
@@ -33,14 +30,12 @@ sample/sample_logrank_status.csv
 - first column must be the same as the item and value files 
 - second column contains survival time of corresponding samples/individuals (e.g. in months, years, or days)
 - file format: csv
-example:
-sample/sample_logrank_time.csv
+- example: sample/sample_logrank_time.csv
 
 
 ## Output File:
 - similar format to the original LAMP output file
-example:
-sample/sample_logrank_output.txt
+- example: sample/sample_logrank_output.txt
 
 
 ## How to run LAMP for survival analysis:
