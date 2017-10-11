@@ -1,8 +1,5 @@
 
-Survival LAMP is an extended version of LAMP (Terada et al 2013) for performing log-rank test in survival analysis.
-
-LAMP is a code for multiple testing correction to discover combinatorial effects. The lcm53.zip is the redistributed file that is provided in [http://research.nii.ac.jp/~uno/codes.htm.](http://research.nii.ac.jp/~uno/codes.htm)
-The usage of LAMP is described in [http://a-terada.github.io/lamp/.](http://a-terada.github.io/lamp/)
+Survival LAMP is an extended version of LAMP (Terada et al 2013) for performing multiple testing correction in finding combinatorial markers using log-rank test in survival analysis. Details and usage of the original LAMP are given in [http://a-terada.github.io/lamp/.](http://a-terada.github.io/lamp/)
 
 
 ## How to run LAMP for survival analysis:
