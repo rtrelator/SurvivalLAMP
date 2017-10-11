@@ -52,7 +52,7 @@ import functions.functions4logrank as functions4logrank
 
 set_opts = ("fisher", "u_test", "chi", "logrank") 
 
-__version__ = "1.0.5"
+__version__ = "1.0"
 
 class MASLError(Exception):
 	def __init__(self, e):
@@ -272,7 +272,7 @@ def outputResult( transaction_file, flag_file, time_file, threshold, set_method,
 	if not set_method == "u_test":
 		flag_size = func_f.getN1()
 	# output setting
-	sys.stdout.write("# LAMP ver. %s\n" % __version__)
+	sys.stdout.write("# Survival LAMP ver. %s\n" % __version__)
 	sys.stdout.write("# item-file: %s\n" % (transaction_file))
 	sys.stdout.write("# value-file: %s\n" % (flag_file))
 	sys.stdout.write("# time-file: %s\n" % (time_file))
@@ -291,7 +291,7 @@ def outputResult( transaction_file, flag_file, time_file, threshold, set_method,
 		if set_method == "u_test":
 			sys.stdout.write("z-score\n")
 		else:
-			sys.stdout.write("# of at risk in the targets\n")
+			sys.stdout.write("# of failed targets\n")
 		enrich_lst.sort(lambda x,y:cmp(x[1], y[1]))
 		rank = 0
 		for l in enrich_lst:
