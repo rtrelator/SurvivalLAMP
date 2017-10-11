@@ -39,7 +39,7 @@ The usage of LAMP is described in [http://a-terada.github.io/lamp/.](http://a-te
 
 
 ## How to run LAMP for survival analysis:
-compile: `make`
-run: `python lampSA_ver1.py -p logrank [item_file] [status_file] [significance_level] -t [time_file] > [output_file]`
+- compile: `make`
+- run: `python lampSA_ver1.py -p logrank [item_file] [status_file] [significance_level] -t [time_file] > [output_file]`
 
 EXAMPLE: `python lampSA_ver1.py -p logrank sample/sample_logrank_item.csv sample/sample_logrank_status.csv 0.05 -t sample/sample_logrank_time.csv > sample/sample_logrank_output.txt`
