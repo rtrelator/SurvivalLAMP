@@ -52,9 +52,9 @@ python lampSA.py -p logrank sample/sample_logrank_item.csv sample/sample_logrank
 - example: sample/sample_logrank_output.txt
 ```
 # Survival LAMP ver. 1.0
-# item-file: ../LAMP_SurvivalAnalysis/lampSA_ver1/sample/sample_logrank_item.csv
-# value-file: ../LAMP_SurvivalAnalysis/lampSA_ver1/sample/sample_logrank_status.csv
-# time-file: ../LAMP_SurvivalAnalysis/lampSA_ver1/sample/sample_logrank_time.csv
+# item-file: sample/sample_logrank_item.csv
+# value-file: sample/sample_logrank_status.csv
+# time-file: sample/sample_logrank_time.csv
 # significance-level: 0.05
 # P-value computing procedure: logrank
 # # of tested elements: 9, # of samples: 292, # of positive samples: 101
