@@ -63,6 +63,7 @@ Rank	Raw p-value	Adjusted p-value	Combination	Arity	# of target rows	# of at ris
 5	0.00042816	0.038106	r60_n9,Pro25G,G3PDH_570	3	10	7
 Time (sec.): Computing correction factor 0.669, P-value 1.310, Total 1.979
 ```
+
 - # of tested elements = number of marker columns in item file
 - # of samples = number of samples/individuals included (not counting censored samples/individuals after first failure time)
 - # of positive samples = number of failed samples/individuals (i.e. status = 1)
