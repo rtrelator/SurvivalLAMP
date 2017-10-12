@@ -66,11 +66,11 @@ Rank	Raw p-value	Adjusted p-value	Combination	Arity	# of target rows	# of failed
 Time (sec.): Computing correction factor 0.620, P-value 1.363, Total 1.983
 ```
 
-- **__# of tested elements__** = number of marker columns in item file
-- *#* of samples = number of samples/individuals included (not counting censored samples/individuals after first failure time)
-- *#* of positive samples = number of failed samples/individuals (i.e. status = 1)
-- *#* of target rows = number of samples/individuals affected by the combination
-- *#* of failed targets = number of samples/individuals affected by the combination whose status is 1 (i.e. failures)
+- __*# of tested elements*__ = number of marker columns in item file
+- __*# of samples*__ = number of samples/individuals included (not counting censored samples/individuals after first failure time)
+- __*# of positive samples*__ = number of failed samples/individuals (i.e. status = 1)
+- __*# of target rows*__ = number of samples/individuals affected by the combination
+- __*# of failed targets*__ = number of samples/individuals affected by the combination whose status is 1 (i.e. failures)
 
 ### Log-rank Test and Kaplan-Meier Curves in R
 Performing log-rank test and generating KM plots for the combination results can be implemented using the __survival__ package in __R__:
@@ -106,11 +106,11 @@ COMB=1  14       10     2.86     17.87      18.5
 ```
 
 In the __R__ results:
-- *COMB=0*: population not containing the corresponding marker combination (i.e. item file value = 0 for at least one of the markers)
-- *COMB=1*: population containing the corresponding marker combination (i.e. item file value = 1 for all of the markers)
-- *N* >= # of target rows in the LAMP results (since LAMP disregards censored samples before first failure time. However, this has no effect on the resulting p-value)
-- *Observed* >= # of failed targets in the LAMP results
-- *p* = raw log-rank p-value of the combination
+- __*COMB=0*__: population not containing the corresponding marker combination (i.e. item file value = 0 for at least one of the markers)
+- __*COMB=1*__: population containing the corresponding marker combination (i.e. item file value = 1 for all of the markers)
+- __*N*__ >= # of target rows in the LAMP results (since LAMP disregards censored samples before first failure time. However, this has no effect on the resulting p-value)
+- __*Observed*__ >= # of failed targets in the LAMP results
+- __*p*__ = raw log-rank p-value of the combination
 
 #### Plotting KM Curves
 ```R
@@ -121,7 +121,12 @@ plot(fit)
 # add tick marks for censored data and color legends
 plot(fit, mark.time = T, col = c("blue", "red"), xlab = "Time", ylab = "Survival Probability", lwd = 2, lty = 1, cex.lab = 1.5, cex.axis = 1.5, cex.main = 1.5, cex.sub = 1.5)
 legend("topright", c("without combination", "with combination"), lty = 1, col = c("blue","red"), lwd = 1.5, cex = 1.5)
+
 # getting p-value from log-rank test result
-pval = 1-pchisq(lr$chisq,1)
+pval = 1 - pchisq(lr$chisq, 1)
 title(sprintf("r60_n9,G3PDH_570\np = %.4e", pval), cex.main = 1.5) 
 ```
+
+
+### Reference
+Raissa T. Relator, Aika Terada, Jun Sese. Identifying statistically significant combinatorial markers for survival analysis. In Proc. of the 28th International Conference on Genome Informatics (GIW2017), Oct31-Nov3 2017, Seoul, Korea (*to appear*).
