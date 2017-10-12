@@ -71,3 +71,57 @@ Time (sec.): Computing correction factor 0.620, P-value 1.363, Total 1.983
 - *#* of positive samples = number of failed samples/individuals (i.e. status = 1)
 - *#* of target rows = number of samples/individuals affected by the combination
 - *#* of failed targets = number of samples/individuals affected by the combination whose status is 1 (i.e. failures)
+
+### Log-rank Test and Kaplan-Meier Curves in R
+Performing log-rank test and generating KM plots for the combination results can be implemented using the __survival__ package in __R__:
+
+#### Log-rank Test
+```R
+library(survival)
+
+# read the three input files for LAMP
+df = read.table("sample/sample_logrank_item.csv", sep = ",", header = T, comment.char = "", check.names = F, stringsAsFactors = F)
+df_status = read.table("sample/sample_logrank_status.csv", sep = ",", header = T, comment.char = "", check.names = F, stringsAsFactors = F)
+df_time = read.table("sample/sample_logrank_time.csv", sep = ",", header = T, comment.char = "", check.names = F, stringsAsFactors = F)
+
+# can join into one data frame, otherwise use respective columns of each data frame separately
+df$TIME = df_time$TIMErecurrence; df$STATUS = df_status$EVENTrecurrence
+
+# compute for combination value by getting the product for each sample/individual, add to data frame as column 'COMB'
+# example for combination r60_n9,G3PDH_570
+df$COMB = apply(df[,c("r60_n9","G3PDH_570")], 1, prod)
+
+# perform log-rank test
+lr = survdiff(Surv(TIME, STATUS) ~ COMB, data = df)
+print(lr)
+
+Call:
+survdiff(formula = Surv(TIME, STATUS) ~ COMB, data = df)
+
+         N Observed Expected (O-E)^2/E (O-E)^2/V
+COMB=0 281       91    98.14      0.52      18.5
+COMB=1  14       10     2.86     17.87      18.5
+
+ Chisq= 18.5  on 1 degrees of freedom, p= 1.74e-05
+```
+
+In the __R__ results:
+- *COMB=0*: population not containing the corresponding marker combination (i.e. item file value = 0 for at least one of the markers)
+- *COMB=1*: population containing the corresponding marker combination (i.e. item file value = 1 for all of the markers)
+- *N* >= # of target rows in the LAMP results (since LAMP disregards censored samples before first failure time. However, this has no effect on the resulting p-value)
+- *Observed* >= # of failed targets in the LAMP results
+- *p* = raw log-rank p-value of the combination
+
+#### Plotting KM Curves
+```R
+# fit Kaplan-Meier and plot curves
+fit = survfit(Surv(TIME, STATUS) ~ COMB, data = df)
+plot(fit)
+
+# add tick marks for censored data and color legends
+plot(fit, mark.time = T, col = c("blue", "red"), xlab = "Time", ylab = "Survival Probability", lwd = 2, lty = 1, cex.lab = 1.5, cex.axis = 1.5, cex.main = 1.5, cex.sub = 1.5)
+legend("topright", c("without combination", "with combination"), lty = 1, col = c("blue","red"), lwd = 1.5, cex = 1.5)
+# getting p-value from log-rank test result
+pval = 1-pchisq(lr$chisq,1)
+title(sprintf("r60_n9,G3PDH_570\np = %.4e", pval), cex.main = 1.5) 
+```
