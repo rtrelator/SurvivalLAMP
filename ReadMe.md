@@ -126,7 +126,8 @@ legend("topright", c("without combination", "with combination"), lty = 1, col = 
 pval = 1 - pchisq(lr$chisq, 1)
 title(sprintf("r60_n9,G3PDH_570\np = %.4e", pval), cex.main = 1.5) 
 ```
-
+The code above will produce the following plot:
+![sample_plot](sample/sample_plot.png)
 
 ### Reference
-Raissa T. Relator, Aika Terada, Jun Sese. Identifying statistically significant combinatorial markers for survival analysis. In Proc. of the 28th International Conference on Genome Informatics (GIW2017), Oct31-Nov3 2017, Seoul, Korea (*to appear*).
+Raissa T. Relator, Aika Terada, Jun Sese. *Identifying statistically significant combinatorial markers for survival analysis*. In Proc. of the 28th International Conference on Genome Informatics (GIW2017), Oct31-Nov3 2017, Seoul, Korea (*to appear*).
