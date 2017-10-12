@@ -109,7 +109,7 @@ In the __R__ results:
 - __*COMB=0*__: population not containing the corresponding marker combination (i.e. item file value = 0 for at least one of the markers)
 - __*COMB=1*__: population containing the corresponding marker combination (i.e. item file value = 1 for all of the markers)
 - __*N*__ >= # of target rows in the LAMP results (since LAMP disregards censored samples before first failure time. However, this has no effect on the resulting p-value)
-- __*Observed*__ >= # of failed targets in the LAMP results
+- __*Observed*__ = # of failed targets in the LAMP results
 - __*p*__ = raw log-rank p-value of the combination
 
 #### Plotting KM Curves
