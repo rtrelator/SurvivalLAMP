@@ -1,4 +1,6 @@
 theme: jekyll-theme-minimal
+url: "http://rtrelator.github.io/SurvivalLAMP"
+baseurl: "/SurvivalLAMP"
 title: LAMP for Survival Analysis
 
 google_analytics: "UA-108710588-1"
