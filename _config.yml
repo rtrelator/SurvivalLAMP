@@ -1,4 +1,4 @@
 theme: jekyll-theme-minimal
 title: LAMP for Survival Analysis
 
-google_analytics = "UA-108710588-1"
+google_analytics: "UA-108710588-1"
