@@ -130,4 +130,4 @@ The code above will produce the following plot:
 ![sample_plot](sample/sample_plot.png)
 
 ### Reference
-Raissa T. Relator, Aika Terada, Jun Sese. *Identifying statistically significant combinatorial markers for survival analysis*. In Proc. of the 28th Genome Informatics Workshop (GIW2017). Seoul, Korea, 31 Oct-3 Nov 2017 (*to appear*).
+[Raissa T. Relator, Aika Terada, Jun Sese. *Identifying statistically significant combinatorial markers for survival analysis*. BMC Medical Genomics. 2018 11(Suppl 2):31.](https://bmcmedgenomics.biomedcentral.com/articles/10.1186/s12920-018-0346-x)
