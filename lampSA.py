@@ -52,7 +52,7 @@ import functions.functions4logrank as functions4logrank
 
 set_opts = ("fisher", "u_test", "chi", "logrank") 
 
-__version__ = "1.0"
+__version__ = "1.1.1"
 
 class MASLError(Exception):
 	def __init__(self, e):
@@ -92,9 +92,10 @@ def calBound4logrank( func_f, min_sup, fre_pattern, transaction_list):
 # lcm2transaction_id: Mapping between LCM ID to transaction id.
 # set_method: The procedure name for calibration p-value (fisher/u_test).
 ##
-def runMultTest(transaction_list, trans4lcm, threshold, set_method, lcm_path, max_comb, outlog): 
+def runMultTest(transaction_list, trans4lcm, threshold, set_method, lcm_path, max_comb, min_target, outlog): 
 	max_lambda = maxLambda(transaction_list)
-	lam_star = 1; func_f = None;
+	min_lam = min_target
+	lam_star = min_lam; func_f = None;
 	try:
 		if set_method == "fisher":
 			func_f = functions4fisher.FunctionOfX(transaction_list, max_lambda)
@@ -110,6 +111,10 @@ def runMultTest(transaction_list, trans4lcm, threshold, set_method, lcm_path, ma
 
 	except fs.TestMethodError, e:
 		sys.exit()
+	
+	if max_lambda < min_target: 
+		sys.stderr.write("Error: Minimum target specified (%d) is greater than maximum possible frequency (%d). Please set min_target to less than or equal to %d.\n"%(min_target, max_lambda, max_lambda))
+		sys.exit
 
 	if not set_method == "logrank":
 		try:
@@ -126,48 +131,56 @@ def runMultTest(transaction_list, trans4lcm, threshold, set_method, lcm_path, ma
 			fre_pattern.makeFile4Lem(transaction_list, trans4lcm) # make itemset file for lcm
 			# If file for Lcm exist, comfiem that overwrite the file.
 			# solve K and lambda
-			while lam > 1:
-				outlog.write("--- lambda: " + str(lam) + " ---\n")
-				# if lambda == 1, all tests which support >= 1 are tested.
-				if lam == 1:
-					lam_star = lam
-					fre_pattern.frequentPatterns( trans4lcm, lam, max_comb ) # line 3 of Algorithm
-					k = fre_pattern.getTotal( lam )
-					break
-
+			if lam < min_lam:
+				# is less than min_lam, set lam to min_lam and find all frequent items (v1.1.1)
+				lam = min_lam
+				lam_star = lam
 				fre_pattern.frequentPatterns( trans4lcm, lam, max_comb ) # line 3 of Algorithm
-				m_lambda = fre_pattern.getTotal( lam ) # line 4 of Algorithm
-				outlog.write("  m_lambda: " + str(m_lambda) + "\n")
+				k = fre_pattern.getTotal( lam )
+# 				break
+			elif lam >= min_lam:
+				while lam >= min_lam:
+					outlog.write("--- lambda: " + str(lam) + " ---\n")
+					# if lambda == 1, all tests which support >= 1 are tested.
+					if lam == min_lam:
+						lam_star = lam
+						fre_pattern.frequentPatterns( trans4lcm, lam, max_comb ) # line 3 of Algorithm
+						k = fre_pattern.getTotal( lam )
+						break
 
-				f_lam_1 = calBound( func_f, lam-1, fre_pattern ) # f(lam-1)
-				outlog.write("  f(" + str(lam-1) + ") = " + str(f_lam_1) + "\n")
-				if (f_lam_1 == 0):
-					bottom = sys.maxint
-				else:
-					bottom = (threshold//f_lam_1) + 1 # bottom of line 5 of Algorithm
-				f_lam = calBound( func_f, lam, fre_pattern ) # f(lam)
-				outlog.write("  f(" + str(lam) + ") = " + str(f_lam) + "\n")
-				# If f(lambda) > f(lambda-1), raise error.
-				# Because MASL f(x) is smaller if x is larger.
-				if f_lam > f_lam_1:
-	#				e_out = "f(" + str(lam) + ") = %.3g is larger than f(" + str(lam-1) + ")"
-					sys.stderr.write("MASLError: f(%s) = %.3g is larger than f(%s) = %.3g\n" \
-									 % (lam, f_lam, lam-1, f_lam_1))
-					sys.exit()
-				if (f_lam == 0):
-					top = sys.maxint
-				else:
-					top = threshold//f_lam # top of line 5 of Algorithm
-				outlog.write("  " + str(bottom) + " <= m_lam:" + str(m_lambda) + " <= " + str(top) + "?\n")
-				if bottom <= m_lambda and m_lambda <= top: # branch on condition of line 5
-					k = m_lambda
-					lam_star = lam
-					break
-				outlog.write("  " + str(m_lambda) + " > " + str(top) + "?\n")
-				if m_lambda > top: # branch on condition of line 8
-					lam_star = lam
-					break
-				lam = lam -1
+					fre_pattern.frequentPatterns( trans4lcm, lam, max_comb ) # line 3 of Algorithm
+					m_lambda = fre_pattern.getTotal( lam ) # line 4 of Algorithm
+					outlog.write("  m_lambda: " + str(m_lambda) + "\n")
+
+					f_lam_1 = calBound( func_f, lam-1, fre_pattern ) # f(lam-1)
+					outlog.write("  f(" + str(lam-1) + ") = " + str(f_lam_1) + "\n")
+					if (f_lam_1 == 0):
+						bottom = sys.maxint
+					else:
+						bottom = (threshold//f_lam_1) + 1 # bottom of line 5 of Algorithm
+					f_lam = calBound( func_f, lam, fre_pattern ) # f(lam)
+					outlog.write("  f(" + str(lam) + ") = " + str(f_lam) + "\n")
+					# If f(lambda) > f(lambda-1), raise error.
+					# Because MASL f(x) is smaller if x is larger.
+					if f_lam > f_lam_1:
+		#				e_out = "f(" + str(lam) + ") = %.3g is larger than f(" + str(lam-1) + ")"
+						sys.stderr.write("MASLError: f(%s) = %.3g is larger than f(%s) = %.3g\n" \
+										 % (lam, f_lam, lam-1, f_lam_1))
+						sys.exit()
+					if (f_lam == 0):
+						top = sys.maxint
+					else:
+						top = threshold//f_lam # top of line 5 of Algorithm
+					outlog.write("  " + str(bottom) + " <= m_lam:" + str(m_lambda) + " <= " + str(top) + "?\n")
+					if bottom <= m_lambda and m_lambda <= top: # branch on condition of line 5
+						k = m_lambda
+						lam_star = lam
+						break
+					outlog.write("  " + str(m_lambda) + " > " + str(top) + "?\n")
+					if m_lambda > top: # branch on condition of line 8
+						lam_star = lam
+						break
+					lam = lam -1
 
 		except fs.TestMethodError, e:
 			sys.exit()
@@ -195,54 +208,66 @@ def runMultTest(transaction_list, trans4lcm, threshold, set_method, lcm_path, ma
 				Yj_list.remove( 1 )
 				min_Yj = min( Yj_list )
 			if min_Yj < max_lambda:
-				max_lambda = int( min_Yj-1 )
-				lam = int( min_Yj-1 )
+				if min_Yj-1 >= min_lam:
+					max_lambda = int( min_Yj-1 )
+					lam = int( min_Yj-1 )
+				elif min_Yj-1 < min_lam:
+					max_lambda = min_lam
+					lam = min_lam
 			fre_pattern = frequentPatterns.LCM(lcm_path, max_lambda, outlog)
 			fre_pattern.makeFile4Lem(transaction_list, trans4lcm) # make itemset file for lcm
 			# If file for Lcm exist, comfiem that overwrite the file.
 			# solve K and lambda
-			while lam > 1:
-				outlog.write("--- lambda: " + str(lam) + " ---\n")
-				# if lambda == 1, all tests which support >= 1 are tested.
-				if lam == 1:
-					lam_star = lam
-					fre_pattern.frequentPatterns( trans4lcm, lam, max_comb ) # line 3 of Algorithm
-					k = fre_pattern.getTotal( lam )
-					break
-
+			if lam < min_lam:
+				# is less than min_lam, set lam to min_lam and find all frequent items (v1.1.1)
+				lam = min_lam
+				lam_star = lam
 				fre_pattern.frequentPatterns( trans4lcm, lam, max_comb ) # line 3 of Algorithm
-				m_lambda = fre_pattern.getTotal( lam ) # line 4 of Algorithm
-				outlog.write("  m_lambda: " + str(m_lambda) + "\n")
+				k = fre_pattern.getTotal( lam )
+# 				break
+			elif lam >= min_lam:
+				while lam >= min_lam:
+					outlog.write("--- lambda: " + str(lam) + " ---\n")
+					# if lambda == 1, all tests which support >= 1 are tested.
+					if lam == min_lam:
+						lam_star = lam
+						fre_pattern.frequentPatterns( trans4lcm, lam, max_comb ) # line 3 of Algorithm
+						k = fre_pattern.getTotal( lam )
+						break
 
-				f_lam_1 = calBound4logrank( func_f, lam-1, fre_pattern, transaction_list ) # f(lam-1)
-				outlog.write("  f(" + str(lam-1) + ") = " + str(f_lam_1) + "\n")
-				if (f_lam_1 == 0):
-					bottom = sys.maxint
-				else:
-					bottom = (threshold//f_lam_1) + 1 # bottom of line 5 of Algorithm
-				f_lam = calBound4logrank( func_f, lam, fre_pattern, transaction_list ) # f(lam)
-				outlog.write("  f(" + str(lam) + ") = " + str(f_lam) + "\n")
-				# If f(lambda) > f(lambda-1), raise error.
-				# Because MASL f(x) is smaller if x is larger.
-				if f_lam > f_lam_1:
-	#				e_out = "f(" + str(lam) + ") = %.3g is larger than f(" + str(lam-1) + ")"
-					sys.stderr.write("MASLError: f(%s) = %.3g is larger than f(%s) = %.3g\n" \
-									 % (lam, f_lam, lam-1, f_lam_1))
-					sys.exit()
-				if (f_lam == 0):
-					top = sys.maxint
-				else:
-					top = threshold//f_lam # top of line 5 of Algorithm
-				outlog.write("  " + str(bottom) + " <= m_lam:" + str(m_lambda) + " <= " + str(top) + "?\n")
-				if bottom <= m_lambda and m_lambda <= top: # branch on condition of line 5
-					k = m_lambda
-					lam_star = lam
-					break
-				outlog.write("  " + str(m_lambda) + " > " + str(top) + "?\n")
-				if m_lambda > top: # branch on condition of line 8
-					lam_star = lam
-					break
-				lam = lam -1
+					fre_pattern.frequentPatterns( trans4lcm, lam, max_comb ) # line 3 of Algorithm
+					m_lambda = fre_pattern.getTotal( lam ) # line 4 of Algorithm
+					outlog.write("  m_lambda: " + str(m_lambda) + "\n")
+
+					f_lam_1 = calBound4logrank( func_f, lam-1, fre_pattern, transaction_list ) # f(lam-1)
+					outlog.write("  f(" + str(lam-1) + ") = " + str(f_lam_1) + "\n")
+					if (f_lam_1 == 0):
+						bottom = sys.maxint
+					else:
+						bottom = (threshold//f_lam_1) + 1 # bottom of line 5 of Algorithm
+					f_lam = calBound4logrank( func_f, lam, fre_pattern, transaction_list ) # f(lam)
+					outlog.write("  f(" + str(lam) + ") = " + str(f_lam) + "\n")
+					# If f(lambda) > f(lambda-1), raise error.
+					# Because MASL f(x) is smaller if x is larger.
+					if f_lam > f_lam_1:
+		#				e_out = "f(" + str(lam) + ") = %.3g is larger than f(" + str(lam-1) + ")"
+						sys.stderr.write("MASLError: f(%s) = %.3g is larger than f(%s) = %.3g\n" \
+										 % (lam, f_lam, lam-1, f_lam_1))
+						sys.exit()
+					if (f_lam == 0):
+						top = sys.maxint
+					else:
+						top = threshold//f_lam # top of line 5 of Algorithm
+					outlog.write("  " + str(bottom) + " <= m_lam:" + str(m_lambda) + " <= " + str(top) + "?\n")
+					if bottom <= m_lambda and m_lambda <= top: # branch on condition of line 5
+						k = m_lambda
+						lam_star = lam
+						break
+					outlog.write("  " + str(m_lambda) + " > " + str(top) + "?\n")
+					if m_lambda > top: # branch on condition of line 8
+						lam_star = lam
+						break
+					lam = lam -1
 
 		except fs.TestMethodError, e:
 			sys.exit()
@@ -275,7 +300,8 @@ def outputResult( transaction_file, flag_file, time_file, threshold, set_method,
 	sys.stdout.write("# Survival LAMP ver. %s\n" % __version__)
 	sys.stdout.write("# item-file: %s\n" % (transaction_file))
 	sys.stdout.write("# value-file: %s\n" % (flag_file))
-	sys.stdout.write("# time-file: %s\n" % (time_file))
+	if set_method == "logrank": 
+		sys.stdout.write("# time-file: %s\n" % (time_file))
 	sys.stdout.write("# significance-level: %s\n" % threshold)
 	sys.stdout.write("# P-value computing procedure: %s\n" % set_method)
 	sys.stdout.write("# # of tested elements: %d, # of samples: %d" % ( len(columnid2name), len(transaction_list) ))
@@ -290,8 +316,10 @@ def outputResult( transaction_file, flag_file, time_file, threshold, set_method,
 		sys.stdout.write("Rank\tRaw p-value\tAdjusted p-value\tCombination\tArity\t# of target rows\t")
 		if set_method == "u_test":
 			sys.stdout.write("z-score\n")
-		else:
+		elif set_method == "logrank":
 			sys.stdout.write("# of failed targets\n")
+		else:
+				sys.stdout.write("\n")
 		enrich_lst.sort(lambda x,y:cmp(x[1], y[1]))
 		rank = 0
 		for l in enrich_lst:
@@ -304,8 +332,10 @@ def outputResult( transaction_file, flag_file, time_file, threshold, set_method,
 			sys.stdout.write("%s\t%d\t%d\t" % (out_column[:-1], len(l[0]), l[2]) )
 			if set_method == "u_test":
 				sys.stdout.write("%.5g\n" % l[3])
-			else:
+			elif set_method == "logrank":
 				sys.stdout.write("%d\n" % l[3])
+			else:
+				sys.stdout.write("\n")
 #			sys.stdout.write(out_column[:-1] + "\t" + str(l[2]) + "\t" + str(l[3]) + "\n")
 
 # list up the combinations p_i <= alpha/k
@@ -392,7 +422,7 @@ def version():
 # fdr_flag: A flag to determine FWER or FDR control.
 # delm: delimiter of transaction_file and flag_file
 ##
-def run(transaction_file, flag_file, threshold, set_method, lcm_path, max_comb, log_file, delm, time_file): # RRedit: ADDED LOGRANK OPTION AND TIME_FILE
+def run(transaction_file, flag_file, threshold, set_method, lcm_path, max_comb, min_target, log_file, delm, time_file): # RRedit: ADDED LOGRANK OPTION AND TIME_FILE
 	# read 2 files and get transaction list
 	transaction_list = set()
 	try:
@@ -420,7 +450,7 @@ def run(transaction_file, flag_file, threshold, set_method, lcm_path, max_comb, 
 		starttime = time.time()
 		fre_pattern, lam_star, max_lambda, correction_term_time, func_f \
 					 = runMultTest(transaction_list, transaction4lcm53, threshold, set_method, \
-								   lcm_path, max_comb, outlog)
+								   lcm_path, max_comb, min_target, outlog)
 		enrich_lst, finish_test_time \
 					= fwerControll(transaction_list, fre_pattern, lam_star, max_lambda, \
 								   threshold, lcm2transaction_id, func_f, columnid2name, set_method, outlog)
@@ -451,6 +481,9 @@ if __name__ == "__main__": # RRedit: ADDED TIME_FILE OPTION FOR LOGRANK
 
 	p.add_option('--max_comb', dest = "max_comb", default = "all", \
 				 help = "Set the maximum size of combination to be tested.")
+	
+	p.add_option('--min_target', dest = "min_target", default = 1, \
+				 help = "Set minimum number of targeted samples.")
 
 	p.add_option('-e', dest = "log_filename", default = "", help = "The file name to output log.\n")
 
@@ -481,6 +514,14 @@ if __name__ == "__main__": # RRedit: ADDED TIME_FILE OPTION FOR LOGRANK
 	if ( opts.pvalue_procedure == 'logrank' ) and ( opts.time_file == "" ):
 		sys.stderr.write("Error: Specify time-file for log-rank test by using -t or --time option\n")
 		sys.exit()
+	
+	# check min # of targeted samples
+	if not opts.min_target == 1:
+		if (opts.min_target.isdigit()) and (opts.min_target > 0):
+			opts.min_target = int(opts.min_target)
+		else:
+			sys.stderr.write("Error: max_comb must be a positive integer value.\n")
+			sys.exit()
 
     # check the file exist.
 	if not os.path.isfile(args[0]):
@@ -514,5 +555,5 @@ if __name__ == "__main__": # RRedit: ADDED TIME_FILE OPTION FOR LOGRANK
 	transaction_file = args[0]; flag_file = args[1]; threshold = float(args[2])
 	enrich_lst, k, columnid2name \
 				= run(transaction_file, flag_file, threshold, opts.pvalue_procedure, \
-					  opts.lcm_path, opts.max_comb, log_file, opts.delimiter, opts.time_file)
+					  opts.lcm_path, opts.max_comb, opts.min_target, log_file, opts.delimiter, opts.time_file)
 
